@@ -21,9 +21,9 @@ public class NaiveBayesSpamClassifier {
 			values[c.arrayLocation()] = probabilityOfCategory(document, c);
 		}
 		
-		if (values[0] * NaiveBayesSpamClassification.GOOD_CLASSIFICATION.classificationThreshold() > values[1]) {
+		if (values[0] / NaiveBayesSpamClassification.GOOD_CLASSIFICATION.classificationThreshold() > values[1]) {
 			return NaiveBayesSpamClassification.GOOD_CLASSIFICATION;
-		} else if (values[1] * NaiveBayesSpamClassification.BAD_CLASSIFICATION.classificationThreshold() > values[0]) {
+		} else if (values[1] / NaiveBayesSpamClassification.BAD_CLASSIFICATION.classificationThreshold() > values[0]) {
 			return NaiveBayesSpamClassification.BAD_CLASSIFICATION;
 		} else {
 			return NaiveBayesSpamClassification.NO_CLASSIFICATION; 
@@ -44,7 +44,9 @@ public class NaiveBayesSpamClassifier {
 		self.train("buy pharmaceuticals now", NaiveBayesSpamClassification.BAD_CLASSIFICATION);
 		self.train("the quick rabbit jumps fences", NaiveBayesSpamClassification.GOOD_CLASSIFICATION);
 		
+		System.out.println(self.classify("quick fox"));
 		System.out.println(self.classify("what"));
+		System.out.println(self.classify("pharmaceuticals money"));
 	}
 	
 	String[] getFeatures(String text) {

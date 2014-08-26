@@ -1,7 +1,7 @@
 package com.sibylvision;
 
 public enum NaiveBayesSpamClassification {
-	GOOD_CLASSIFICATION(0, 1), BAD_CLASSIFICATION(1, 2), NO_CLASSIFICATION(-1, -1);
+	GOOD_CLASSIFICATION(0, 3), BAD_CLASSIFICATION(1, 2), NO_CLASSIFICATION(-1, -1);
 	
 	private int returnVal;
 	private int classificationThreshold;
