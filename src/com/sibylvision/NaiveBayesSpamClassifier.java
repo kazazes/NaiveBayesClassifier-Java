@@ -1,6 +1,12 @@
 package com.sibylvision;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Scanner;
 import java.util.Set;
 
 public class NaiveBayesSpamClassifier {
@@ -10,10 +16,37 @@ public class NaiveBayesSpamClassifier {
 	private static final double ASSUMED_PROBABILITY_WEIGHT = 1.0;
 	private static final double ASSUMED_PROBABILITY = 0.5;
 	
-	public NaiveBayesSpamClassifier() {
+	private static final String GOOD_CORPUS_LOCATION = "/Users/pk/Development/eclipse/NaiveBayesClassifier/src/com/sibylvision/good.corpus";
+	private static final String SPAM_CORPUS_LOCATION = "/Users/pk/Development/eclipse/NaiveBayesClassifier/src/com/sibylvision/spam.corpus";
+	
+	public NaiveBayesSpamClassifier(String goodCorpusLocation, String spamCorpusLocation) {
 		featureCategory = new HashMap<String, Integer[]>();
 		categoryUsage = new HashMap<NaiveBayesSpamClassification, Integer>();
+		
+		List<String> goodCorpus;
+		List<String> spamCorpus;
+		
+		try {
+			goodCorpus = Files.readAllLines(Paths.get(goodCorpusLocation), StandardCharsets.UTF_8);
+			spamCorpus = Files.readAllLines(Paths.get(spamCorpusLocation), StandardCharsets.UTF_8);
+			
+			for (String a : goodCorpus) {
+				train(a, NaiveBayesSpamClassification.GOOD_CLASSIFICATION);
+			}
+			
+			for (String a : spamCorpus) {
+				train(a, NaiveBayesSpamClassification.BAD_CLASSIFICATION);
+			}
+		} catch (IOException e) {
+			System.err.println("Issue loading corpus.");
+			e.printStackTrace();
+		}
 	}
+	
+	public NaiveBayesSpamClassifier() {
+		this(GOOD_CORPUS_LOCATION, SPAM_CORPUS_LOCATION);
+	}
+
 
 	public NaiveBayesSpamClassification classify(String document) {
 		Double[] values = new Double[2];
@@ -31,22 +64,15 @@ public class NaiveBayesSpamClassifier {
 	}
 	
 	public static void main(String[] args) {
-		NaiveBayesSpamClassifier self = new NaiveBayesSpamClassifier();
+		NaiveBayesSpamClassifier self = new NaiveBayesSpamClassifier("good.corpus", "spam.corpus");
 		
-		self.train("the quick brown fox jumps", NaiveBayesSpamClassification.GOOD_CLASSIFICATION);
-		self.train("make quick money at the online casino", NaiveBayesSpamClassification.BAD_CLASSIFICATION);
-		self.train("Nobody owns the water.", NaiveBayesSpamClassification.GOOD_CLASSIFICATION);
-		self.train("buy pharmaceuticals now", NaiveBayesSpamClassification.BAD_CLASSIFICATION);
-		self.train("the quick rabbit jumps fences", NaiveBayesSpamClassification.GOOD_CLASSIFICATION);
-		self.train("the quick brown fox jumps", NaiveBayesSpamClassification.GOOD_CLASSIFICATION);
-		self.train("make quick money at the online casino", NaiveBayesSpamClassification.BAD_CLASSIFICATION);
-		self.train("Nobody owns the water.", NaiveBayesSpamClassification.GOOD_CLASSIFICATION);
-		self.train("buy pharmaceuticals now", NaiveBayesSpamClassification.BAD_CLASSIFICATION);
-		self.train("the quick rabbit jumps fences", NaiveBayesSpamClassification.GOOD_CLASSIFICATION);
+		Scanner scan = new Scanner(System.in);
 		
-		System.out.println(self.classify("quick fox"));
-		System.out.println(self.classify("what"));
-		System.out.println(self.classify("pharmaceuticals money"));
+		while (true) {
+			System.out.print("Classify: ");
+			String input = scan.nextLine();
+			System.out.println(self.classify(input));
+		}
 	}
 	
 	String[] getFeatures(String text) {
