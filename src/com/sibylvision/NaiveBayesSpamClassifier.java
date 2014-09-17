@@ -64,14 +64,22 @@ public class NaiveBayesSpamClassifier {
 	}
 	
 	public static void main(String[] args) {
-		NaiveBayesSpamClassifier self = new NaiveBayesSpamClassifier("good.corpus", "spam.corpus");
-		
-		Scanner scan = new Scanner(System.in);
-		
-		while (true) {
-			System.out.print("Classify: ");
-			String input = scan.nextLine();
-			System.out.println(self.classify(input));
+		NaiveBayesSpamClassifier self = new NaiveBayesSpamClassifier();
+		Scanner scan = null;
+
+		try {
+			scan = new Scanner(System.in);
+
+			while (true) {
+				System.out.print("Classify: ");
+				String input = scan.nextLine();
+				System.out.println(self.classify(input));
+			}
+		} finally {
+			// close scanner to silence SE 7 warning
+			if (scan != null) {
+				scan.close();
+			}
 		}
 	}
 	
